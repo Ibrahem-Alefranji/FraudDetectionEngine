@@ -17,8 +17,8 @@ namespace FraudDetectionEngine.Services
                     MAX(TransactionAmount) AS MaxAmount,
                     COUNT(*) AS CountLast7Days
                 FROM UserBehaviorLog
-                WHERE UserId = @UserId AND Timestamp >= DATEADD(DAY, -30, GETDATE())",
-                new { tx.UserId });
+                WHERE CardNumber = @CardNumber AND Timestamp >= DATEADD(DAY, -30, GETDATE())",
+                new { tx.CardNumber });
 
             //tx.UserAvgAmount30Days = 150;// stats?.AvgAmount ?? 0;
             //tx.UserMaxAmount30Days = 300;// stats?.MaxAmount ?? 0;
@@ -33,18 +33,18 @@ namespace FraudDetectionEngine.Services
 
             string sql = @"
                 INSERT INTO UserBehaviorLog (
-                    UserId, TransactionId, Amount, Time, Location, Device, TransactionType
+                    CardNumber, TransactionId, Amount, CreatedOn, IPAddress, Device, TransactionType
                 ) VALUES (
-                    @UserId, @TransactionId, @Amount, @Time, @Location, @Device, @TransactionType
+                    @CardNumber, @TransactionId, @Amount, @CreatedOn, @IPAddress, @Device, @TransactionType
                 )";
 
             conn.Execute(sql, new
             {
-                tx.UserId,
+                tx.CardNumber,
                 TransactionId = transactionId,
                 tx.Amount,
-                tx.Time,
-                tx.Location,
+                tx.CreatedOn,
+                tx.IPAddress,
                 tx.Device,
                 tx.TransactionType
             });

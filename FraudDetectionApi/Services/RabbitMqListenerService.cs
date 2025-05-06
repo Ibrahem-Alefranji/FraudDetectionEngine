@@ -46,11 +46,11 @@ public class RabbitMqListenerService : BackgroundService
             var fraudService = new FraudDecisionService(_connectionString);
             var result = fraudService.Decide(transaction);
 
-            Console.WriteLine($"[FraudDetection] {transaction.UserId} - Action: {result.Action} (Score: {result.Score})");
+            Console.WriteLine($"[FraudDetection] {transaction.CardNumber} - Action: {result.Action} (Score: {result.Score})");
 
             if (result.Action == "Challenge")
             {
-                OTPService.Generate(transaction.UserId, Guid.NewGuid(), _connectionString);
+                OTPService.Generate(transaction.CardNumber, Guid.NewGuid(), _connectionString);
             }
 
             //await Task.Yield(); // let the thread yield

@@ -25,7 +25,7 @@ namespace FraudDetectionApi.Controllers
         [HttpGet("publish-fake-transaction")]
         public async Task<ActionResult> PublishFakeTransactionsAsync()
         {
-           await FakeTransactionPublisher.PublishFakeTransactions(100);
+           await PublishFakeTransactions.SendAsync(100);
 
 
             return Ok(new { message = "publish fake transaction was sent." });
@@ -47,7 +47,7 @@ namespace FraudDetectionApi.Controllers
             // ✅ Only one publish, correct
             await channel.BasicPublishAsync(exchange: "", routingKey: "fraud_detection_queue", body: body);
 
-            Console.WriteLine($"✅ Transaction sent: {transaction.UserId}");
+            Console.WriteLine($"✅ Transaction sent: {transaction.CardNumber}");
 
             return Ok(new { message = "Transaction sent to RabbitMQ queue." });
         }

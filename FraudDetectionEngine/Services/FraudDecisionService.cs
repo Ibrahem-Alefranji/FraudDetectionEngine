@@ -73,18 +73,19 @@ namespace FraudDetectionEngine.Services
         {
             using var conn = new SqlConnection(_connectionString);
             conn.Execute(@"
-                INSERT INTO FraudTransactionSample (
-                    TransactionId, UserId, Amount, Time, Location, Device, TransactionType,
+                INSERT INTO FraudTransactionHistory (
+                    TransactionId, CardNumber, Amount, CreatedOn, Location, IPAddress, Device, TransactionType,
                     Score, IsFraud, RiskLevel, Source
                 ) VALUES (
-                    @TransactionId, @UserId, @Amount, @Time, @Location, @Device, @TransactionType,
+                    @TransactionId, @CardNumber, @Amount, @CreatedOn, @Location, @IPAddress, @Device, @TransactionType,
                     @Score, @IsFraud, @RiskLevel, @Source)",
                 new
                 {
                     TransactionId = transactionId,
-                    tx.UserId,
+                    tx.CardNumber,
                     tx.Amount,
-                    tx.Time,
+                    tx.CreatedOn,
+                    tx.IPAddress,
                     tx.Location,
                     tx.Device,
                     tx.TransactionType,

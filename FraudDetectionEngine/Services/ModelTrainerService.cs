@@ -14,16 +14,16 @@ namespace FraudDetectionEngine.Services
 
             string sql = @"
         SELECT 
-            f.Amount, f.Time, f.Location, f.Device, f.TransactionType, 
+            f.Amount, f.CreatedOn, f.IPAddress, f.Device, f.Location, f.TransactionType, 
             AVG(b.TransactionAmount) AS UserAvgAmount30Days,
             MAX(b.TransactionAmount) AS UserMaxAmount30Days,
             COUNT(b.Id) AS UserTransactionCount7Days,
             f.IsFraud
-        FROM FraudTransactionSample f
-        JOIN UserBehaviorLog b ON f.UserId = b.UserId
+        FROM FraudTransactionHistory f
+        JOIN UserBehaviorLog b ON f.CardNumber = b.CardNumber
         WHERE f.VerifiedByUser IS NOT NULL
         AND b.Timestamp >= DATEADD(DAY, -30, GETDATE())
-        GROUP BY f.Amount, f.Time, f.Location, f.Device, f.TransactionType, f.IsFraud";
+        GROUP BY f.Amount, f.CreatedOn, f.IPAddress, f.Device, f.Location, f.TransactionType, f.IsFraud";
 
             var result = connection.Query<TransactionData>(sql).ToList();
             return result;

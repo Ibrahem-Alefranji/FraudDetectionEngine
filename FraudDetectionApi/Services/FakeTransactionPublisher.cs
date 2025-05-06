@@ -3,52 +3,65 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
-using FraudDetectionEngine.Models; // Adjust namespace if needed
+using FraudDetectionEngine.Models; // Adjust if your model is elsewhere
+using System.Collections.Generic;
 
-public class FakeTransactionPublisher
+public static class PublishFakeTransactions
 {
-    public static async Task PublishFakeTransactions(int numberOfTransactions)
+    private static readonly string[] Devices = { "iOS", "Android", "Desktop", "MacOS", "Linux" };
+    private static readonly string[] Locations = { "City-10", "City-22", "City-35", "City-48", "City-77" };
+    private static readonly string[] Sources = { "Web", "Mobile", "API", "RabbitMQ" };
+    private static readonly Random Rand = new();
+
+    private static string GenerateFakeCardNumber()
     {
-        var factory = new ConnectionFactory() { HostName = "localhost" };
+        string[] prefixes = { "4111", "5500", "6011" };
+        return $"{prefixes[Rand.Next(prefixes.Length)]}-{Rand.Next(1000, 9999)}-{Rand.Next(1000, 9999)}-{Rand.Next(1000, 9999)}";
+    }
+
+    private static string GenerateRandomIP()
+    {
+        return $"192.168.{Rand.Next(0, 255)}.{Rand.Next(0, 255)}";
+    }
+
+    public static async Task SendAsync(int count)
+    {
+        var factory = new ConnectionFactory { HostName = "localhost" };
 
         using var connection = await factory.CreateConnectionAsync();
         using var channel = await connection.CreateChannelAsync();
 
-        await channel.QueueDeclareAsync(queue: "fraud_detection_queue", durable: false, exclusive: false, autoDelete: false);
+        await channel.QueueDeclareAsync("fraud_detection_queue", durable: false, exclusive: false, autoDelete: false);
 
-        var rand = new Random();
-
-        for (int i = 0; i < numberOfTransactions; i++)
+        for (int i = 0; i < count; i++)
         {
-            var isFraudulent = rand.NextDouble() < 0.15; // ~15% are fraud-like
+            bool isFraud = Rand.NextDouble() > 0.85;
 
-            var transaction = new TransactionData
+            var transaction = new
             {
-                UserId = rand.Next(1, 200),
-                Amount = isFraudulent
-                    ? (float)rand.Next(5000, 15000) // Fraud = high amount
-                    : (float)rand.Next(10, 300),
-                Time = (float)rand.Next(0, 86400),
-                Location = isFraudulent
-                    ? rand.Next(70, 100) // Fraud = new location
-                    : rand.Next(1, 30),
-                Device = isFraudulent
-                    ? rand.Next(10, 20) // Fraud = new device
-                    : rand.Next(1, 5),
-                TransactionType = rand.Next(0, 2),
-                UserAvgAmount30Days = (float)rand.Next(50, 200),
-                UserMaxAmount30Days = (float)rand.Next(200, 500),
-                UserTransactionCount7Days = rand.Next(5, 20)
+                TransactionId = i + 1,
+                CardNumber = GenerateFakeCardNumber(),
+                Amount = isFraud ? Rand.Next(5000, 10000) : Rand.Next(10, 300),
+                Location = Locations[Rand.Next(Locations.Length)],
+                IPAddress = GenerateRandomIP(),
+                Device = Devices[Rand.Next(Devices.Length)],
+                TransactionType = Rand.Next(0, 2),
+                Score = Math.Round(Rand.NextDouble(), 4),
+                IsFraud = isFraud ? 1 : 0,
+                RiskLevel = isFraud ? "High" : (Rand.NextDouble() > 0.5 ? "Medium" : "Low"),
+                VerifiedByUser = Rand.Next(0, 2).ToString(),
+                Source = Sources[Rand.Next(Sources.Length)],
+                CreatedOn = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
             };
 
             var json = JsonConvert.SerializeObject(transaction);
             var body = Encoding.UTF8.GetBytes(json);
 
-            await channel.BasicPublishAsync(exchange: "", routingKey: "fraud_detection_queue", body: body);
+            await channel.BasicPublishAsync("", "fraud_detection_queue", body);
 
-            Console.WriteLine($"📤 Published {(isFraudulent ? "[FRAUD]" : "[NORMAL]")} Transaction: User {transaction.UserId} - Amount: {transaction.Amount}");
+            Console.WriteLine($"📤 Sent {(isFraud ? "[FRAUD]" : "[NORMAL]")} TX: {transaction.CardNumber} - {transaction.Amount} - {transaction.Device}");
         }
 
-        Console.WriteLine($"✅ Finished sending {numberOfTransactions} fake transactions.");
+        Console.WriteLine($"✅ Published {count} fake transactions.");
     }
 }
