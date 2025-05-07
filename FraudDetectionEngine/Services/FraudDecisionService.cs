@@ -71,6 +71,8 @@ namespace FraudDetectionEngine.Services
 
         private void LogDecision(TransactionData tx, Guid transactionId, TransactionPrediction prediction, string riskLevel)
         {
+            tx.CreatedOn = DateTime.Now;
+
             using var conn = new SqlConnection(_connectionString);
             conn.Execute(@"
                 INSERT INTO FraudTransactionHistory (
