@@ -9,10 +9,13 @@ namespace FraudDetectionEngine.Services
 {
     public class FraudDecisionResult
     {
-        public string Action { get; set; }
+        public string? Action { get; set; }
+
         public float Score { get; set; }
+
         public bool IsFraud { get; set; }
-        public string Reason { get; set; }
+
+        public string? Reason { get; set; }
     }
 
     public class FraudDecisionService
