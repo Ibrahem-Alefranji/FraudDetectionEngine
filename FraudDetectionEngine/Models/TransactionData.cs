@@ -5,6 +5,8 @@ namespace FraudDetectionEngine.Models
 {
     public class TransactionData
     {
+        public Guid TransactionId { get; set; }
+
         public string CardNumber { get; set; }
         public float Amount { get; set; }
         public string Location { get; set; }

@@ -7,7 +7,7 @@ namespace FraudDetectionEngine.Services
 {
     public static class OTPService
     {
-        public static void Generate(string cardNumber, Guid transactionId, string connectionString)
+        public static string Generate(string cardNumber, Guid transactionId, string connectionString)
         {
             string code = new Random().Next(100000, 999999).ToString();
             DateTime expires = DateTime.Now.AddMinutes(5);
@@ -18,7 +18,7 @@ namespace FraudDetectionEngine.Services
                 VALUES (@CardNumber, @TransactionId, @Code, @ExpiresAt)",
                 new { cardNumber, transactionId, code, expires });
 
-            Console.WriteLine($"[OTP] Sent code {code} to user {cardNumber}");
+            return code;
         }
 
         public static bool Verify(string cardNumber, Guid transactionId, string code, string connectionString)

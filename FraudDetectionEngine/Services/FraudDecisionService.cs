@@ -52,13 +52,12 @@ namespace FraudDetectionEngine.Services
                 reason = "Low risk score";
             }
 
-            Guid transactionId = Guid.NewGuid();
 
             // Store fraud result
-            LogDecision(enriched, transactionId, prediction, action);
+            LogDecision(enriched, tx.TransactionId, prediction, action);
 
             // ALSO log user behavior
-            //UserBehaviorService.Log(tx, transactionId, _connectionString);
+            UserBehaviorService.Log(tx, tx.TransactionId, _connectionString);
 
             return new FraudDecisionResult
             {
@@ -71,8 +70,6 @@ namespace FraudDetectionEngine.Services
 
         private void LogDecision(TransactionData tx, Guid transactionId, TransactionPrediction prediction, string riskLevel)
         {
-            tx.CreatedOn = DateTime.Now;
-
             using var conn = new SqlConnection(_connectionString);
             conn.Execute(@"
                 INSERT INTO FraudTransactionHistory (
@@ -94,7 +91,7 @@ namespace FraudDetectionEngine.Services
                     Score = prediction.Score,
                     IsFraud = prediction.IsFraud,
                     RiskLevel = riskLevel,
-                    Source = "RabbitMQ"
+                    Source = tx.Source
                 });
         }
     }

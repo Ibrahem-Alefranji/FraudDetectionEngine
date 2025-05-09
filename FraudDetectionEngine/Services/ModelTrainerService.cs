@@ -22,7 +22,7 @@ namespace FraudDetectionEngine.Services
         FROM FraudTransactionHistory f
         JOIN UserBehaviorLog b ON f.CardNumber = b.CardNumber
         WHERE f.VerifiedByUser IS NOT NULL
-        AND b.Timestamp >= DATEADD(DAY, -30, GETDATE())
+        AND b.CreatedOn >= DATEADD(DAY, -30, GETDATE())
         GROUP BY f.Amount, f.CreatedOn, f.IPAddress, f.Device, f.Location, f.TransactionType, f.IsFraud";
 
             var result = connection.Query<TransactionData>(sql).ToList();

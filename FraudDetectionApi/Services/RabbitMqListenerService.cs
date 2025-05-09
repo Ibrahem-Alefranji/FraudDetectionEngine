@@ -6,6 +6,7 @@ using Newtonsoft.Json;
 using FraudDetectionEngine.Models;
 using FraudDetectionEngine.Services;
 using Microsoft.Extensions.Configuration;
+using FraudDetectionApi.Services;
 
 public class RabbitMqListenerService : BackgroundService
 {
