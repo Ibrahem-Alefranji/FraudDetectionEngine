@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FraudDetectionEngine", "Fra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FraudDetectionApi", "FraudDetectionApi\FraudDetectionApi.csproj", "{0ADC3ED5-C3D5-4A0E-8734-78DD827B42C3}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FraudDetectionWeb", "FraudDetectionWeb\FraudDetectionWeb.csproj", "{43765DB2-29C5-4703-9FA3-BFF976F06080}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{0ADC3ED5-C3D5-4A0E-8734-78DD827B42C3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0ADC3ED5-C3D5-4A0E-8734-78DD827B42C3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0ADC3ED5-C3D5-4A0E-8734-78DD827B42C3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43765DB2-29C5-4703-9FA3-BFF976F06080}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43765DB2-29C5-4703-9FA3-BFF976F06080}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43765DB2-29C5-4703-9FA3-BFF976F06080}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43765DB2-29C5-4703-9FA3-BFF976F06080}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
