@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using FraudDetectionWeb.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace FraudDetectionWeb.Data
@@ -9,5 +10,7 @@ namespace FraudDetectionWeb.Data
             : base(options)
         {
         }
+
+        public DbSet<Subscription> Subscription { get; set; }
     }
 }
