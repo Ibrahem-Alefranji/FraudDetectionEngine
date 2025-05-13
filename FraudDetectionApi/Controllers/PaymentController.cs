@@ -32,9 +32,8 @@ namespace FraudDetectionApi.Controllers
                 Guid transactionId = Guid.NewGuid();
 
                 // check transaction is fraud or not using a custom model
-                var result = fraudService.Decide(new FraudDetectionEngine.Models.TransactionData()
+                var result = fraudService.Decide(new FraudDetectionEngine.Models.TransactionTraningData()
                 {
-                    TransactionId = transactionId,
                     CardNumber = request.CardNumber,
                     Amount = request.Amount,
                     TransactionType = request.TransactionType,
@@ -43,7 +42,7 @@ namespace FraudDetectionApi.Controllers
                     Location = request.Location,
                     Source = request.Source,
                     CreatedOn = DateTime.Now
-                });
+                }, transactionId.ToString());
 
                
                 if (result.Action == "Block")  // the transaction high risk score

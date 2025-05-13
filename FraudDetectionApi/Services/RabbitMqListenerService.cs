@@ -7,6 +7,7 @@ using FraudDetectionEngine.Models;
 using FraudDetectionEngine.Services;
 using Microsoft.Extensions.Configuration;
 using FraudDetectionApi.Services;
+using System.Transactions;
 
 public class RabbitMqListenerService : BackgroundService
 {
@@ -42,10 +43,12 @@ public class RabbitMqListenerService : BackgroundService
         {
             var body = ea.Body.ToArray();
             var json = Encoding.UTF8.GetString(body);
-            var transaction = JsonConvert.DeserializeObject<TransactionData>(json);
+            var transaction = JsonConvert.DeserializeObject<TransactionTraningData>(json);
 
             var fraudService = new FraudDecisionService(_connectionString);
-            var result = fraudService.Decide(transaction);
+			Guid transactionId = Guid.NewGuid();
+
+			var result = fraudService.Decide(transaction, transactionId.ToString());
 
             Console.WriteLine($"[FraudDetection] {transaction.CardNumber} - Action: {result.Action} (Score: {result.Score})");
 

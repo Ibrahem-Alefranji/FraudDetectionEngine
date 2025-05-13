@@ -13,11 +13,11 @@ namespace FraudDetectionWeb.Controllers
             _configuration = configuration;
         }
 
-        public IActionResult Index()
+        public IActionResult Index(string query = "", string country = "", string region = "")
         {
             var subs = new SubscriptionService(_configuration);
 
-            var result = subs.GetAll();
+            var result = subs.GetAll(query, country, region);
             return View(result);
         }
 

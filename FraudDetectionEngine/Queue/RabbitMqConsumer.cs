@@ -26,9 +26,10 @@ namespace FraudDetectionEngine.Queue
             {
                 var body = ea.Body.ToArray();
                 var json = Encoding.UTF8.GetString(body);
-                var transaction = JsonConvert.DeserializeObject<TransactionData>(json);
+                var transaction = JsonConvert.DeserializeObject<TransactionTraningData>(json);
+				Guid transactionId = Guid.NewGuid();
 
-                var result = fraudService.Decide(transaction);
+				var result = fraudService.Decide(transaction, transactionId.ToString());
 
                 Console.WriteLine($"[FraudDecision] Action: {result.Action} | Score: {result.Score} | Reason: {result.Reason}");
 

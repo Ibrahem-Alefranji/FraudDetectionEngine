@@ -7,7 +7,7 @@ namespace FraudDetectionEngine.Services
 {
     public static class UserBehaviorService
     {
-        public static TransactionData Enrich(TransactionData tx, string connectionString)
+        public static TransactionTraningData Enrich(TransactionTraningData tx, string connectionString)
         {
             using var conn = new SqlConnection(connectionString);
 
@@ -27,7 +27,7 @@ namespace FraudDetectionEngine.Services
             return tx;
         }
 
-        public static void Log(TransactionData tx, Guid transactionId, string connectionString)
+        public static void Log(TransactionTraningData tx, string transactionId, string connectionString)
         {
             using var conn = new SqlConnection(connectionString);
 

@@ -1,4 +1,5 @@
 
+using FraudDetectionApi.Interface;
 using FraudDetectionApi.Services;
 
 namespace FraudDetectionApi
@@ -18,7 +19,7 @@ namespace FraudDetectionApi
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
-            builder.Services.AddScoped<PaymentService, PaymentService>();
+            builder.Services.AddScoped<IPaymentService, PaymentService>();
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

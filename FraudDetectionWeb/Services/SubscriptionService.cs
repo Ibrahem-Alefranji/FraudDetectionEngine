@@ -61,7 +61,7 @@ namespace FraudDetectionWeb.Services
                 UPDATE Subscription SET
                     FullName = @FullName, BusinessName = @BusinessName, Url = @Url, Email = @Email, Phone = @Phone,
                     Country = @Country, Region = @Region, City = @City, Address = @Address, ClientId = @ClientId,
-                    ClientSecret = @ClientSecret, ExpirationDate = @ExpirationDate, Active = @Active, Deleted = @Deleted
+                    ClientSecret = @ClientSecret, Active = @Active, Deleted = @Deleted
                 WHERE 
                     Id = @Id";
             conn.Execute(sql, new
@@ -78,7 +78,6 @@ namespace FraudDetectionWeb.Services
                 subscription.Address,
                 subscription.ClientId,
                 subscription.ClientSecret,
-                subscription.ExpirationDate,
                 subscription.Active,
                 subscription.Deleted,
             });
@@ -96,6 +95,7 @@ namespace FraudDetectionWeb.Services
                     Id = @Id";
             conn.Execute(sql, new
             {
+                Id = id,
                 Deleted = true,
             });
 
@@ -103,14 +103,25 @@ namespace FraudDetectionWeb.Services
         }
 
 
-        public IEnumerable<Subscription> GetAll()
+        public IEnumerable<Subscription> GetAll(string query, string country, string region)
         {
             using var conn = new SqlConnection(_connectionString);
 
-            string sql = @"SELECT * FROM Subscription WHERE Deleted = @Deleted";
+            string sql = @"SELECT * FROM Subscription WHERE (FullName LIKE @query or BusinessName LIKE @query)
+                    AND Deleted = @Deleted";
+
+            if (!string.IsNullOrEmpty(country))
+            {
+                sql += $" AND Country = '{country}'";
+			} 
+            if (!string.IsNullOrEmpty(region))
+            {
+                sql += $" AND Region = '{region}'";
+			}
             var record = conn.Query<Subscription>(sql, new
             {
-                Deleted = false
+				query = $"%{query}%",
+				Deleted = false
             });
 
             return record;

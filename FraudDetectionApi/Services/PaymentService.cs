@@ -23,7 +23,7 @@ namespace FraudDetectionApi.Services
             var record = conn.QueryFirstOrDefault<Subscription>(@"
                 SELECT * FROM Subscription 
                 WHERE ClientId = @ClientId AND ClientSecret = @clientSecret 
-                AND Active = true AND ExpirationDate > GETDATE() AND Deleted = false"
+                AND Active = 1 AND ExpirationDate > GETDATE() AND Deleted = 0"
             , new { clientId, clientSecret });
 
             if (record != null)

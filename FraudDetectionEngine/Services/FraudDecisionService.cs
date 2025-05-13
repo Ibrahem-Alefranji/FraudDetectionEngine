@@ -30,10 +30,10 @@ namespace FraudDetectionEngine.Services
             _model = _mlContext.Model.Load("fraudDetectionModel.zip", out _);
         }
 
-        public FraudDecisionResult Decide(TransactionData tx)
+        public FraudDecisionResult Decide(TransactionTraningData tx, string transactionId)
         {
             var enriched = UserBehaviorService.Enrich(tx, _connectionString);
-            var engine = _mlContext.Model.CreatePredictionEngine<TransactionData, TransactionPrediction>(_model);
+            var engine = _mlContext.Model.CreatePredictionEngine<TransactionTraningData, TransactionPrediction>(_model);
             var prediction = engine.Predict(enriched);
 
             string action;
@@ -57,10 +57,10 @@ namespace FraudDetectionEngine.Services
 
 
             // Store fraud result
-            LogDecision(enriched, tx.TransactionId, prediction, action);
+            LogDecision(enriched, transactionId, prediction, action);
 
             // ALSO log user behavior
-            UserBehaviorService.Log(tx, tx.TransactionId, _connectionString);
+            UserBehaviorService.Log(tx, transactionId, _connectionString);
 
             return new FraudDecisionResult
             {
@@ -71,7 +71,7 @@ namespace FraudDetectionEngine.Services
             };
         }
 
-        private void LogDecision(TransactionData tx, Guid transactionId, TransactionPrediction prediction, string riskLevel)
+        private void LogDecision(TransactionTraningData tx, string transactionId, TransactionPrediction prediction, string riskLevel)
         {
             using var conn = new SqlConnection(_connectionString);
             conn.Execute(@"
