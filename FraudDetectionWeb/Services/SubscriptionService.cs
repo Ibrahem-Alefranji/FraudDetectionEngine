@@ -86,6 +86,23 @@ namespace FraudDetectionWeb.Services
             return "The Subscription Uodated succesfully";
         }
 
+        public string Delete(int id)
+        {
+            using var conn = new SqlConnection(_connectionString);
+
+            string sql = @"
+                UPDATE Subscription SET Deleted = @Deleted
+                WHERE 
+                    Id = @Id";
+            conn.Execute(sql, new
+            {
+                Deleted = true,
+            });
+
+            return "The Subscription Deleted succesfully";
+        }
+
+
         public IEnumerable<Subscription> GetAll()
         {
             using var conn = new SqlConnection(_connectionString);

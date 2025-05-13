@@ -26,13 +26,38 @@ namespace FraudDetectionWeb.Controllers
             return View();
         }
 
+        public IActionResult Update(int id)
+        {
+            var subs = new SubscriptionService(_configuration);
+            var result = subs.GetSingle(id);
+
+            return View(result);
+        }
+
         [HttpPost]
         public IActionResult Create(Subscription subscription)
         {
             var subs = new SubscriptionService(_configuration);
             var result = subs.Create(subscription);
 
-            return View();
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public IActionResult Update(Subscription subscription)
+        {
+            var subs = new SubscriptionService(_configuration);
+            var result = subs.Update(subscription);
+
+            return RedirectToAction("Index");
+        }
+
+        public IActionResult Delete(int id)
+        {
+            var subs = new SubscriptionService(_configuration);
+            var result = subs.Delete(id);
+
+            return RedirectToAction("Index");
         }
     }
 }
