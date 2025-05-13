@@ -13,7 +13,7 @@ namespace FraudDetectionEngine.Services
             using var connection = new SqlConnection(connectionString);
 
 			string sql = @"
-        SELECT TOP (1000) 
+        SELECT  
             f.Amount, f.CreatedOn, f.IPAddress, f.Device, f.Location, f.TransactionType, 
             AVG(b.TransactionAmount) AS UserAvgAmount30Days,
             MAX(b.TransactionAmount) AS UserMaxAmount30Days,
