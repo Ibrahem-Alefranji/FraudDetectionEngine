@@ -15,10 +15,19 @@ namespace FraudDetectionWeb.Controllers
 
         public IActionResult Index()
         {
+            return View();
+        }    
+        public async Task<JsonResult> LoadData(int draw,
+        int start,
+        int length,
+        string? search,
+        float? amount,
+        int? type)
+        {
             var trans = new TransactionsService(_configuration);
 
-            var result = trans.GetAll();
-            return View(result);
+            var result = await trans.OnGetTransactionsAsync(draw, start, length, search, amount, type);
+            return Json(result.Value);
         }
     }
 }

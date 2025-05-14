@@ -2,101 +2,108 @@
 @using FraudDetectionWeb.DTOs
 @model IEnumerable<TransactionsResponse>
 @{
-	ViewData["Title"] = "Payment Transactions";
+    ViewData["Title"] = "Payment Transactions";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
 <div class="d-flex flex-column-fluid">
-	<div class="container">
-		<div class="card card-custom">
-			<div class="card-header flex-wrap border-0 pt-6 pb-0">
-				<div class="card-title">
-					<h3 class="card-label">
-						@ViewData["Title"]
-						@* <span class="d-block text-muted pt-2 font-size-sm">Initialized from remote json file</span> *@
-					</h3>
-				</div>
-			</div>
-			<div class="card-body">
-				<div class="mb-7">
-					<div class="row align-items-center">
-						<div class="col-lg-9 col-xl-8">
-							<div class="row align-items-center">
-								<div class="col-md-4 my-2 my-md-0">
-									<div class="input-icon">
-										<input type="text" class="form-control" placeholder="Search..." />
-										<span><i class="flaticon2-search-1 text-muted"></i></span>
-									</div>
-								</div>
+    <div class="container">
 
-								<div class="col-md-4 my-2 my-md-0">
-									<div class="d-flex align-items-center">
-										<label class="mr-3 mb-0 d-none d-md-block">Status:</label>
-										<select class="form-control" id="kt_datatable_search_status">
-											<option value="">All</option>
-											<option value="1">Pending</option>
-											<option value="2">Delivered</option>
-											<option value="3">Canceled</option>
-											<option value="4">Success</option>
-											<option value="5">Info</option>
-											<option value="6">Danger</option>
-										</select>
-									</div>
-								</div>
-								<div class="col-md-4 my-2 my-md-0">
-									<div class="d-flex align-items-center">
-										<label class="mr-3 mb-0 d-none d-md-block">Type:</label>
-										<select class="form-control" id="kt_datatable_search_type">
-											<option value="">All</option>
-											<option value="1">Online</option>
-											<option value="2">Retail</option>
-											<option value="3">Direct</option>
-										</select>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-lg-3 col-xl-4 mt-5 mt-lg-0">
-							<a href="#" class="btn btn-light-primary px-6 font-weight-bold">
-								Search
-							</a>
-						</div>
-					</div>
-				</div>
-				<div class="">
-					<table class="table table-striped">
-						<thead>
-							<tr class="datatable-row">
-								<th>Order Id</th>
-								<th>Subscribe</th>
-								<th>Amount</th>
-								<th>Transaction Type</th>
-								<th>Location</th>
-								<th>IPAddress</th>
-								<th>Source</th>
-								<th>Created On</th>
-							</tr>
-						</thead>
-						<tbody>
-							@if(Model != null)
-							{
-								foreach(var item in Model)
-								{
-									<tr>
-										<td>@item.OrderId</td>
-										<td>@item.BusinessName</td>
-										<td>@item.Amount</td>
-										<td>@item.TransactionTypeText</td>
-										<td>@item.Location</td>
-										<td>@item.IPAddress</td>
-										<td>@item.Source</td>
-										<td>@item.CreatedOn.Value.Date.ToShortDateString()</td>
-									</tr>
-								}
-							}
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-	</div>
+        <div class="card card-custom">
+            <div class="card-header flex-wrap border-0 pt-6 pb-0">
+                <div class="card-title">
+                    <h3 class="card-label">@ViewData["Title"]</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <input id="globalSearch" type="text" class="form-control" placeholder="Search..." />
+                        </div>
+                        <div class="col-md-3">
+                            <input id="Amount" type="text" class="form-control" placeholder="Search Amount" />
+                        </div>
+                        <div class="col-md-3">
+                            <select id="filterType" class="form-control">
+                                <option value="">Transaction Type</option>
+                                <option value="1">Purchase</option>
+                                <option value="2">Return</option>
+                                <!-- etc. -->
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button id="btnSearch" type="button" class="btn btn-primary">Search</button>
+                        </div>
+                    </div>
+
+                    <table id="transactionsTable" class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Order Id</th>
+                                <th>Subscribe</th>
+                                <th>Amount</th>
+                                <th>Transaction Type</th>
+                                <th>Location</th>
+                                <th>IPAddress</th>
+                                <th>Source</th>
+                                <th>Created On</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- DataTables will insert rows here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            </div>
+    </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+@* <script src="https://cdn.datatables.net/2.3.0/js/dataTables.js"></script> *@
+<script>
+    $(document).ready(function () {
+        var table = $('#transactionsTable').DataTable({
+            ordering: false,
+            searching: false,
+            ordering: {
+                handler: false
+            },
+            searchDelay: 500,
+            processing: true,
+            serverSide: true,
+            ajax: {
+                url: '/Transactions/LoadData',
+                data: function (d) {
+                    d.search = $('#globalSearch').val();
+                    d.amount = $('#Amount').val();
+                    d.type = $('#filterType').val();
+                }
+            },
+            columns: [
+                { data: 'orderId' },
+                { data: 'businessName' },
+                { data: 'amount' },
+                { data: 'transactionTypeText' },
+                { data: 'location' },
+                { data: 'ipAddress' },
+                { data: 'source' },
+                {
+                    data: 'createdOn', render: function (data) {
+                        return new Date(data).toLocaleDateString();
+                    }
+                }
+            ],
+            columnDefs: [
+                {
+                    orderable: false,
+                    targets: [-1]
+                }
+            ]
+        });
+
+        // 🔍 Trigger reload on search button click
+        $('#btnSearch').on('click', function (e) {
+            e.preventDefault();
+            table.ajax.reload();
+        });
+    });
+</script>

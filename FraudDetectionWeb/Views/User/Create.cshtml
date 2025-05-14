@@ -1,0 +1,80 @@
+﻿@using FraudDetectionWeb.Models
+@model User
+@{
+    ViewData["Title"] = "Create new User";
+}
+
+<div class="d-flex flex-column-fluid">
+    <div class="container">
+        <div class="card card-custom">
+            <div class="card-header">
+                <div class="card-title">
+                    <span class="card-icon"><i class="flaticon2-add text-primary"></i></span>
+                    <h4 class="card-label">@ViewData["Title"]</h4>
+                </div>
+            </div>
+            <form class="form" method="post" action="/User/Create">
+                <div class="card-body row">
+                    <div class="form-group col-md-6">
+                        <label>Full Name:</label>
+                        <input type="text" asp-for="FullName" name="FullName" class="form-control" placeholder="Enter Full name" />
+                        <span asp-validation-for="FullName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Username:</label>
+                        <input type="text" asp-for="Username" name="Username" class="form-control" placeholder="Enter Username" />
+                        <span asp-validation-for="Username" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Password:</label>
+                        <input type="password" asp-for="PasswordHash" name="PasswordHash" class="form-control" placeholder="Enter Password" />
+                        <span asp-validation-for="PasswordHash" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-3">
+                        <label>Email:</label>
+                        <input type="text" asp-for="Email" name="Email" class="form-control" placeholder="Enter Email" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Phone Number:</label>
+                        <input type="text" asp-for="PhoneNumber" name="PhoneNumber" class="form-control" placeholder="Enter Phone Number" />                        <span asp-validation-for="Email" class="text-danger"></span>
+                        <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label>Country:</label>
+                        <select class="form-control" asp-for="Country" name="Country">
+                            <option value="">Select</option>
+                            <option value="Palestinian">Palestinian</option>
+                        </select>
+                        <span asp-validation-for="Country" class="text-danger"></span>
+                    </div>
+                    <div class="form-group col-md-2">
+                        <label>Region:</label>
+                        <select class="form-control" asp-for="Region" name="Region">
+                            <option value="">Select</option>
+                            <option value="WestBank">West bank </option>
+                            <option value="GazaStrip">Gaza strip </option>
+                        </select>
+                        <span asp-validation-for="Region" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label>&nbsp;</label>
+                        <div class="checkbox-list">
+                            <label class="checkbox">
+                                <input asp-for="IsAdmin" name="IsAdmin" type="checkbox" />
+                                <span></span>
+                                IsAdmin
+                            </label>
+                            <span asp-validation-for="IsAdmin" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary mr-2">Submit</button>
+                    <button type="reset" class="btn btn-secondary">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

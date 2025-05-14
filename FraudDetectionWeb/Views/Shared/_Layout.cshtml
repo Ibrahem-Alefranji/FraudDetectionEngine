@@ -1,4 +1,7 @@
-﻿
+﻿@{
+    string url = Context.Request.Path.ToString();
+
+}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,11 +11,12 @@
     <meta name="description" content="Updates and statistics" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700" />        <!--end::Fonts-->
-    <link href="~/assets/plugins/custom/fullcalendar/fullcalendar.bundle.css" rel="stylesheet" type="text/css" />
     <link href="~/assets/plugins/global/plugins.bundle.css" rel="stylesheet" type="text/css" />
     <link href="~/assets/plugins/custom/prismjs/prismjs.bundle.css" rel="stylesheet" type="text/css" />
     <link href="~/assets/css/style.bundle.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/plugins/custom/datatables/datatables.bundle.css" rel="stylesheet" />
     <link rel="shortcut icon" href="~/assets/media/logos/Logo.png" />
+
     <style>
       /*   .header-menu .menu-nav > .menu-item > .menu-link .menu-text {
             color: #006cee !important;
@@ -67,22 +71,26 @@
                             <div class="header-menu-wrapper header-menu-wrapper-left" id="kt_header_menu_wrapper">
                                 <div id="kt_header_menu" class="header-menu header-menu-left header-menu-mobile  header-menu-layout-default ">
                                     <ul class="menu-nav ">
-                                        <li class="menu-item  menu-item-open menu-item-here menu-item-submenu menu-item-rel menu-item-open menu-item-here" data-menu-toggle="click" aria-haspopup="true">
-                                            <a href="javascript:;" class="menu-link menu-toggle">
+                                        <li class="menu-item @(url.ToLower().Equals("/") ? "menu-item-here" : "")">
+                                            <a href="~/" class="menu-link ">
                                                 <span class="menu-text">Dashboard</span>
-                                                <i class="menu-arrow"></i>
                                             </a>
-                                          <div class="menu-submenu menu-submenu-classic menu-submenu-left">
                                         </li>   
-                                        <li class="menu-item menu-item-submenu menu-item-rel">
+                                        <li class="menu-item @(url.ToLower().StartsWith("/subscription/") ? "menu-item-here" : "")">
                                             <a href="/Subscription/Index" class="menu-link">
-                                                <span class="menu-text">Subscription</span>
+                                                <span class="menu-text">Subscriptions</span>
                                                 <i class="menu-arrow"></i>
                                             </a>
                                         </li>  
-                                        <li class="menu-item menu-item-submenu menu-item-rel">
+                                        <li class="menu-item @(url.ToLower().StartsWith("/transactions/") ? "menu-item-here" : "")">
                                             <a href="/Transactions/Index" class="menu-link">
                                                 <span class="menu-text">Transactions</span>
+                                                <i class="menu-arrow"></i>
+                                            </a>
+                                        </li>  
+                                        <li class="menu-item @(url.ToLower().StartsWith("/user/") ? "menu-item-here" : "")">
+                                            <a href="/User/Index" class="menu-link">
+                                                <span class="menu-text">Users</span>
                                                 <i class="menu-arrow"></i>
                                             </a>
                                         </li>
@@ -225,13 +233,9 @@
             "font-family": "Poppins"
         };
     </script>
-    <!--end::Global Config-->
-    <!--begin::Global Theme Bundle(used by all pages)-->
     <script src="~/assets/plugins/global/plugins.bundle.js"></script>
     <script src="~/assets/plugins/custom/prismjs/prismjs.bundle.js"></script>
     <script src="~/assets/js/scripts.bundle.js"></script>
-    <script src="~/assets/js/pages/crud/ktdatatable/base/data-json.js"></script>
-    <!--end::Global Theme Bundle-->
+    <script src="~/assets/plugins/custom/datatables/datatables.bundle.js"></script>
 </body>
-<!--end::Body-->
 </html>

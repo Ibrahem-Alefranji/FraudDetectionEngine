@@ -1,46 +1,77 @@
-﻿using Dapper;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Dapper;
 using FraudDetectionWeb.DTOs;
-using FraudDetectionWeb.Models;
-using Microsoft.Data.SqlClient;
+using Microsoft.Data.SqlClient; // Adjust namespace as needed
 
-namespace FraudDetectionWeb.Services
+public class TransactionsService : PageModel
 {
-    public class TransactionsService
-	{
-        private readonly IConfiguration _configuration;
-        private readonly string? _connectionString;
+    private readonly IConfiguration _config;
 
-        public TransactionsService(IConfiguration configuration)
+    public TransactionsService(IConfiguration config)
+    {
+        _config = config;
+    }
+
+    public IActionResult OnGet() => Page();
+
+    public async Task<JsonResult> OnGetTransactionsAsync(
+        int draw,
+        int start,
+        int length,
+        string? search,
+        float? amount,
+        int? type)
+    {
+        using var conn = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
+
+        var where = "WHERE pay.SubscribeId = sub.Id";
+        var parameters = new DynamicParameters();
+
+        if (!string.IsNullOrEmpty(search))
         {
-            _configuration = configuration;
-            _connectionString = _configuration.GetConnectionString("DefaultConnection");
+            where += " AND (pay.OrderId LIKE @search OR sub.BusinessName LIKE @search OR pay.IPAddress LIKE @search)";
+            parameters.Add("search", $"%{search}%");
         }
 
-        public IEnumerable<TransactionsResponse> GetAll()
+        if (amount.HasValue)
         {
-            using var conn = new SqlConnection(_connectionString);
-
-            string sql = @"SELECT pay.*, sub.BusinessName, CASE WHEN pay.TransactionType = 1 THEN '' ELSE '' END as TransactionTypeText
-                           FROM PaymentTransaction pay, Subscription sub 
-                           WHERE pay.SubscribeId = sub.Id";
-            var record = conn.Query<TransactionsResponse>(sql);
-
-            return record;
-        }  
-        
-        public PaymentTransaction? GetSingle(int id)
-        {
-            using var conn = new SqlConnection(_connectionString);
-
-            string sql = @"SELECT * FROM PaymentTransaction WHERE Id = @Id";
-            var record = conn.QueryFirstOrDefault<PaymentTransaction>(sql, new
-            {
-                Id = id
-            });
-
-            return record;
+            where += " AND pay.Amount = @Amount";
+            parameters.Add("Amount", amount);
         }
 
+        if (type.HasValue)
+        {
+            where += " AND pay.TransactionType = @type";
+            parameters.Add("type", type);
+        }
 
+        var sql = $@"
+            SELECT COUNT(*) FROM PaymentTransaction pay, Subscription sub  {where};
+            SELECT pay.*, sub.BusinessName, CASE WHEN pay.TransactionType = 1 THEN 'Purchase' ELSE 'Return' END as TransactionTypeText
+            FROM PaymentTransaction pay, Subscription sub 
+            {where}
+            ORDER BY pay.CreatedOn DESC
+            OFFSET @start ROWS FETCH NEXT @length ROWS ONLY;
+        ";
+
+        parameters.Add("start", start);
+        parameters.Add("length", length);
+
+        using var multi = await conn.QueryMultipleAsync(sql, parameters);
+
+        var totalFiltered = await multi.ReadFirstAsync<int>();
+        var data = (await multi.ReadAsync<TransactionsResponse>()).ToList();
+
+        // Optionally: get total records if different from filtered
+        var totalRecords = totalFiltered; // Or: await conn.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM Transactions");
+
+        return new JsonResult(new
+        {
+            draw,
+            recordsTotal = totalRecords,
+            recordsFiltered = totalFiltered,
+            data
+        });
     }
 }
