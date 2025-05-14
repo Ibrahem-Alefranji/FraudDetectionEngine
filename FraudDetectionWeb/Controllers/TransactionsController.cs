@@ -1,9 +1,11 @@
 ﻿using FraudDetectionWeb.Models;
 using FraudDetectionWeb.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FraudDetectionWeb.Controllers
 {
+    [Authorize]
     public class TransactionsController : Controller
     {
         private readonly IConfiguration _configuration;

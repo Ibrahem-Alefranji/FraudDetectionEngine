@@ -1,5 +1,4 @@
 ﻿using FraudDetectionWeb.Models;
-using FraudDetectionWeb.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FraudDetectionWeb.Controllers
@@ -23,10 +22,10 @@ namespace FraudDetectionWeb.Controllers
             return View();
         }
 
-        public IActionResult Update(int id)
+        public async Task<IActionResult> Update(int id)
         {
             var subs = new UserService(_configuration);
-            var result = subs.GetUserByIdAsync(id);
+            var result = await subs.GetUserByIdAsync(id);
 
             return View(result);
         }

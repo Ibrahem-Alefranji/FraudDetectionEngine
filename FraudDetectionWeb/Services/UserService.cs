@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using FraudDetectionWeb.DTOs;
 using FraudDetectionWeb.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;

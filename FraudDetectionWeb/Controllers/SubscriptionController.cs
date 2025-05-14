@@ -1,10 +1,12 @@
 ﻿using FraudDetectionWeb.Models;
 using FraudDetectionWeb.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FraudDetectionWeb.Controllers
 {
-    public class SubscriptionController : Controller
+	[Authorize]
+	public class SubscriptionController : Controller
     {
         private readonly IConfiguration _configuration;
 

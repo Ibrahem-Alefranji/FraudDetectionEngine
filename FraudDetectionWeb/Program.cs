@@ -13,6 +13,16 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
+builder.Services.AddAuthentication("4TpayAuth")
+	.AddCookie("4TpayAuth", options =>
+	{
+		options.Cookie.Name = "4Tpay.Auth";
+		options.LoginPath = "/Account/Login"; // your login page
+		options.AccessDeniedPath = "/Account/AccessDenied";
+		options.ExpireTimeSpan = TimeSpan.FromHours(1);
+	});
+
+builder.Services.AddAuthorization(); // optional, if using roles/claims
 
 var app = builder.Build();
 
@@ -33,6 +43,7 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
