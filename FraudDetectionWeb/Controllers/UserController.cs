@@ -1,8 +1,10 @@
 ﻿using FraudDetectionWeb.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FraudDetectionWeb.Controllers
 {
+    [Authorize(Roles = "admin")]
     public class UserController : Controller
     {
         private readonly IConfiguration _configuration;

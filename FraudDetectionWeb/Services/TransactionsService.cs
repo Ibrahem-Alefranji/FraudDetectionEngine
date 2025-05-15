@@ -21,7 +21,8 @@ public class TransactionsService : PageModel
         int length,
         string? search,
         float? amount,
-        int? type)
+        int? type,
+        int? subscribeId)
     {
         using var conn = new SqlConnection(_config.GetConnectionString("DefaultConnection"));
 
@@ -38,6 +39,12 @@ public class TransactionsService : PageModel
         {
             where += " AND pay.Amount = @Amount";
             parameters.Add("Amount", amount);
+        }     
+        
+        if (subscribeId.HasValue)
+        {
+            where += " AND sub.Id = @subscribeId";
+            parameters.Add("subscribeId", subscribeId);
         }
 
         if (type.HasValue)

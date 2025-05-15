@@ -16,6 +16,13 @@
             <form class="form" method="post" action="/Subscription/Create">
                 <div class="card-body row">
                     <div class="form-group col-md-6">
+                        <label>User :</label>
+                        <select name="UserId" asp-for="UserId" asp-items="ViewBag.UserId" class="form-control">
+                            <option value="">Select</option>
+                        </select>
+                        <span asp-validation-for="UserId" class="text-danger"></span>
+                    </div> 
+                    <div class="form-group col-md-6">
                         <label>Full Name:</label>
                         <input type="text" asp-for="FullName" name="FullName" class="form-control" placeholder="Enter Full name" />
                         <span asp-validation-for="FullName" class="text-danger"></span>

@@ -35,10 +35,10 @@ public class UserService
             "SELECT * FROM Users WHERE Id = @Id", new { Id = id });
     }
 
-    public async Task<IEnumerable<User>> GetAllUsersAsync()
+    public async Task<IEnumerable<User>> GetAllSubscribUsersAsync()
     {
         using var conn = CreateConnection();
-        return await conn.QueryAsync<User>("SELECT * FROM Users");
+        return await conn.QueryAsync<User>("SELECT * FROM Users WHERE IsAdmin = 0");
     }
 
     public async Task<JsonResult> GetAllUsersAsync(int draw, int start, int length, string query)

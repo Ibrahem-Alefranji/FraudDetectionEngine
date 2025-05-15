@@ -2,11 +2,12 @@
 using FraudDetectionWeb.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace FraudDetectionWeb.Controllers
 {
-	[Authorize]
-	public class SubscriptionController : Controller
+    [Authorize(Roles = "admin")]
+    public class SubscriptionController : Controller
     {
         private readonly IConfiguration _configuration;
 
@@ -23,8 +24,10 @@ namespace FraudDetectionWeb.Controllers
             return View(result);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var user = new UserService(_configuration);
+            ViewBag.UserId = new SelectList(await user.GetAllSubscribUsersAsync(), "Id", "FullName");
             return View();
         }
 

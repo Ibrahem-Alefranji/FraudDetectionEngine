@@ -21,10 +21,10 @@ namespace FraudDetectionWeb.Services
 
             string sql = @"
                 INSERT INTO Subscription (
-                    FullName, BusinessName, Url, Email, Phone, Country, Region, City, Address, ClientId, ClientSecret,
+                    UserId, FullName, BusinessName, Url, Email, Phone, Country, Region, City, Address, ClientId, ClientSecret,
                     ExpirationDate, Active, Deleted, CreatedOn, CreatedBy
                 ) VALUES (
-                    @FullName, @BusinessName, @Url, @Email, @Phone, @Country, @Region, @City, @Address, @ClientId, @ClientSecret,
+                    @UserId, @FullName, @BusinessName, @Url, @Email, @Phone, @Country, @Region, @City, @Address, @ClientId, @ClientSecret,
                     @ExpirationDate, @Active, @Deleted, @CreatedOn, @CreatedBy
                 )";
 
@@ -32,6 +32,7 @@ namespace FraudDetectionWeb.Services
             subscription.CreatedOn = DateTime.Now;
             conn.Execute(sql, new
             {
+                subscription.UserId,
                 subscription.FullName,
                 subscription.BusinessName,
                 subscription.Url,
@@ -59,7 +60,7 @@ namespace FraudDetectionWeb.Services
 
             string sql = @"
                 UPDATE Subscription SET
-                    FullName = @FullName, BusinessName = @BusinessName, Url = @Url, Email = @Email, Phone = @Phone,
+                    UserId = @UserId, FullName = @FullName, BusinessName = @BusinessName, Url = @Url, Email = @Email, Phone = @Phone,
                     Country = @Country, Region = @Region, City = @City, Address = @Address, ClientId = @ClientId,
                     ClientSecret = @ClientSecret, Active = @Active, Deleted = @Deleted
                 WHERE 
@@ -67,6 +68,7 @@ namespace FraudDetectionWeb.Services
             conn.Execute(sql, new
             {
                 subscription.Id,
+                subscription.UserId,
                 subscription.FullName,
                 subscription.BusinessName,
                 subscription.Url,
@@ -101,7 +103,6 @@ namespace FraudDetectionWeb.Services
 
             return "The Subscription Deleted succesfully";
         }
-
 
         public IEnumerable<Subscription> GetAll(string query, string country, string region)
         {
@@ -140,5 +141,20 @@ namespace FraudDetectionWeb.Services
 
             return record;
         }
+
+        public Subscription? GetSingleByUserId(int id)
+        {
+            using var conn = new SqlConnection(_connectionString);
+
+            string sql = @"SELECT * FROM Subscription WHERE Deleted = @Deleted and UserId = @Id";
+            var record = conn.QueryFirstOrDefault<Subscription>(sql, new
+            {
+                Id = id,
+                Deleted = false
+            });
+
+            return record;
+        }
+
     }
 }

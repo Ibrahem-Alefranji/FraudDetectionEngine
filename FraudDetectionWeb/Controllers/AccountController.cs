@@ -1,10 +1,8 @@
 ﻿using FraudDetectionWeb.DTOs;
-using FraudDetectionWeb.Models;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using static Dapper.SqlMapper;
 using System.Security.Claims;
+using FraudDetectionWeb.Services;
 
 namespace FraudDetectionWeb.Controllers
 {
@@ -17,6 +15,11 @@ namespace FraudDetectionWeb.Controllers
             _configuration = configuration;
         }
 
+        public IActionResult AccessDenied()
+        {
+            return View();
+        }   
+        
         public IActionResult Login()
         {
             return View();
@@ -37,7 +40,9 @@ namespace FraudDetectionWeb.Controllers
 					new Claim(ClaimTypes.Name, result.Username),
 					new Claim(ClaimTypes.Email, result.Email ?? ""),
 					new Claim(ClaimTypes.MobilePhone, result.PhoneNumber ?? ""),
-					new Claim("IsAdmin", result.IsAdmin.ToString())
+					new Claim("IsAdmin", result.IsAdmin.ToString()),
+					new Claim(ClaimTypes.Role, result.IsAdmin ? "admin" : "subscriber"),
+					new Claim("SubscribeId", GetSubscribIdByUserId(result.Id, result.IsAdmin))
 				};
 
 				var identity = new ClaimsIdentity(claims, "4TpayAuth");
@@ -49,6 +54,18 @@ namespace FraudDetectionWeb.Controllers
 				return Redirect("/Transactions/Index");
 			}
 			return View();
+        }
+
+        private string GetSubscribIdByUserId(int userId, bool isAdmin)
+        {
+            if (isAdmin)
+            {
+                return string.Empty;
+            }
+
+            var user = new SubscriptionService(_configuration);
+            var result = user.GetSingleByUserId(userId);
+            return result != null ? result.Id.ToString() : string.Empty;
         }
     }
 }
