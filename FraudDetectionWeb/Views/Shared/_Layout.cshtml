@@ -1,4 +1,5 @@
-﻿@{
+﻿@inject IHttpContextAccessor _accessor
+@{
     string url = Context.Request.Path.ToString();
 
 }
@@ -76,24 +77,29 @@
                                                 <span class="menu-text">Dashboard</span>
                                             </a>
                                         </li>   
-                                        <li class="menu-item @(url.ToLower().StartsWith("/subscription/") ? "menu-item-here" : "")">
-                                            <a href="/Subscription/Index" class="menu-link">
-                                                <span class="menu-text">Subscriptions</span>
-                                                <i class="menu-arrow"></i>
-                                            </a>
-                                        </li>  
+                                        @if (_accessor.HttpContext.User.IsInRole("admin"))
+                                        {
+                                            <li class="menu-item @(url.ToLower().StartsWith("/subscription/") ? "menu-item-here" : "")">
+                                                <a href="/Subscription/Index" class="menu-link">
+                                                    <span class="menu-text">Subscriptions</span>
+                                                </a>
+                                            </li>
+                                        }
+                                      
                                         <li class="menu-item @(url.ToLower().StartsWith("/transactions/") ? "menu-item-here" : "")">
                                             <a href="/Transactions/Index" class="menu-link">
                                                 <span class="menu-text">Transactions</span>
-                                                <i class="menu-arrow"></i>
-                                            </a>
-                                        </li>  
-                                        <li class="menu-item @(url.ToLower().StartsWith("/user/") ? "menu-item-here" : "")">
-                                            <a href="/User/Index" class="menu-link">
-                                                <span class="menu-text">Users</span>
-                                                <i class="menu-arrow"></i>
                                             </a>
                                         </li>
+                                        @if (_accessor.HttpContext.User.IsInRole("admin"))
+                                        {
+                                            <li class="menu-item @(url.ToLower().StartsWith("/user/") ? "menu-item-here" : "")">
+                                                <a href="/User/Index" class="menu-link">
+                                                    <span class="menu-text">Users</span>
+                                                </a>
+                                            </li>
+                                        }
+                                    
                                     </ul>
                                 </div>
                             </div>
