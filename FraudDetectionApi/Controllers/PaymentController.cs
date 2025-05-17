@@ -53,7 +53,7 @@ namespace FraudDetectionApi.Controllers
                 {
                     string otpCode = OTPService.Generate(request.CardNumber, transactionId, _connectionString);
 
-                    return BadRequest(new { Message = "Sorry, your transaction needs to be confirmed using the Otp Code", OtpCode = otpCode, TransactionId = transactionId, Status = false });
+                    return BadRequest(new { Message = "Sorry, your transaction needs to be confirmed using the Otp Code", OtpCode = otpCode, TransactionId = transactionId.ToString(), Status = false });
                 }
                 else // the transaction low risk score. can be added
                 {
