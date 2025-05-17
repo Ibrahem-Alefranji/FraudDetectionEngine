@@ -7,7 +7,7 @@ namespace FraudDetectionEngine.Services
 {
     public static class OTPService
     {
-        public static string Generate(string cardNumber, Guid transactionId, string connectionString)
+        public static string Generate(string cardNumber, string transactionId, string connectionString)
         {
             string code = new Random().Next(100000, 999999).ToString();
             DateTime expires = DateTime.Now.AddMinutes(5);
@@ -16,12 +16,12 @@ namespace FraudDetectionEngine.Services
             conn.Execute(@"
                 INSERT INTO OtpChallenges (CardNumber, TransactionId, Code, ExpiresAt)
                 VALUES (@CardNumber, @TransactionId, @Code, @ExpiresAt)",
-                new { cardNumber, transactionId, code, expires });
+                new { cardNumber, transactionId, code, ExpiresAt = expires });
 
             return code;
         }
 
-        public static bool Verify(string cardNumber, Guid transactionId, string code, string connectionString)
+        public static bool Verify(string cardNumber, string transactionId, string code, string connectionString)
         {
             using var conn = new SqlConnection(connectionString);
             var record = conn.QueryFirstOrDefault(@"

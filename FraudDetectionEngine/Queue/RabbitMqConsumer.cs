@@ -34,7 +34,7 @@ namespace FraudDetectionEngine.Queue
                 Console.WriteLine($"[FraudDecision] Action: {result.Action} | Score: {result.Score} | Reason: {result.Reason}");
 
                 if (result.Action == "Challenge")
-                    OTPService.Generate(transaction.CardNumber, Guid.NewGuid(), connectionString);
+                    OTPService.Generate(transaction.CardNumber, Guid.NewGuid().ToString(), connectionString);
 
                 return Task.CompletedTask;
             };

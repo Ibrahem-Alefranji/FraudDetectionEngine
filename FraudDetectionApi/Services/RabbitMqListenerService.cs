@@ -54,7 +54,7 @@ public class RabbitMqListenerService : BackgroundService
 
             if (result.Action == "Challenge")
             {
-                OTPService.Generate(transaction.CardNumber, Guid.NewGuid(), _connectionString);
+                OTPService.Generate(transaction.CardNumber, Guid.NewGuid().ToString(), _connectionString);
             }
 
             //await Task.Yield(); // let the thread yield

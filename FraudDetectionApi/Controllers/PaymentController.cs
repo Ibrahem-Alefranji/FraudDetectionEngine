@@ -47,13 +47,13 @@ namespace FraudDetectionApi.Controllers
                
                 if (result.Action == "Block")  // the transaction high risk score
                 {
-                    return BadRequest(new { Message = "Sorry, your transaction has been blocked because it's a fraudulent transaction", Status = false });
+                    return Ok(new { Message = "Sorry, your transaction has been blocked because it's a fraudulent transaction", Status = false });
                 }
                 else if (result.Action == "Challenge") // the transaction medium risk score and need otp to verfied
                 {
-                    string otpCode = OTPService.Generate(request.CardNumber, transactionId, _connectionString);
+                    string otpCode = OTPService.Generate(request.CardNumber, transactionId.ToString(), _connectionString);
 
-                    return BadRequest(new { Message = "Sorry, your transaction needs to be confirmed using the Otp Code", OtpCode = otpCode, TransactionId = transactionId.ToString(), Status = false });
+                    return Ok(new { Message = "Sorry, your transaction needs to be confirmed using the Otp Code", OtpCode = otpCode, TransactionId = transactionId.ToString(), Status = false });
                 }
                 else // the transaction low risk score. can be added
                 {
@@ -65,20 +65,20 @@ namespace FraudDetectionApi.Controllers
                 }
             }
 
-            return BadRequest(new { Message = "Your subscription expired or doesn't exist", Status = false });
+            return Ok(new { Message = "Your subscription expired or doesn't exist", Status = false });
         }      
         
         [HttpPost("verify-otp")]
         public IActionResult VerifyOtp([FromBody] VerifyOtp request)
         {
-            var otpCode = OTPService.Verify(request.CardNumber, request.TransactionId, request.Code, _connectionString);
+            var otpCode = OTPService.Verify(request.CardNumber, request.TransactionId.ToString(), request.Code, _connectionString);
 
             if (otpCode)
             {
-                return BadRequest(new { Message = "The payment tranaction was confirm successfully", Status = true });
+                return Ok(new { Message = "The payment tranaction was confirm successfully", Status = true });
             }
 
-            return BadRequest(new { Message = "Sorry, Your Code doesn't exist or expired", Status = false });
+            return Ok(new { Message = "Sorry, Your Code doesn't exist or expired", Status = false });
         }
 
     }
