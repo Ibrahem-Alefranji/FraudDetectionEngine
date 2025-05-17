@@ -56,7 +56,13 @@ namespace FraudDetectionWeb.Controllers
 			return View();
         }
 
-        private string GetSubscribIdByUserId(int userId, bool isAdmin)
+		public async Task<IActionResult> Logout()
+		{
+			await HttpContext.SignOutAsync("4TpayAuth");
+
+			return RedirectToAction("Login");
+		}
+		private string GetSubscribIdByUserId(int userId, bool isAdmin)
         {
             if (isAdmin)
             {

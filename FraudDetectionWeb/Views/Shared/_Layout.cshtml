@@ -1,6 +1,11 @@
 ﻿@inject IHttpContextAccessor _accessor
+@using System.Security.Claims;
+
 @{
     string url = Context.Request.Path.ToString();
+    string userId = User.FindFirst(ClaimTypes.NameIdentifier).Value;
+    string email = User.FindFirst(ClaimTypes.Email).Value;
+    string name = User.FindFirst(ClaimTypes.Name).Value;
 
 }
 <!DOCTYPE html>
@@ -109,7 +114,7 @@
                                 <div class="topbar-item">
                                     <div class="btn btn-icon btn-hover-transparent-white d-flex align-items-center btn-lg px-md-2 w-md-auto" id="kt_quick_user_toggle">
                                         <span class="text-white opacity-70 font-weight-bold font-size-base d-none d-md-inline mr-1">Hi,</span>
-                                        <span class="text-white opacity-90 font-weight-bolder font-size-base d-none d-md-inline mr-4">Sean</span>
+                                        <span class="text-white opacity-90 font-weight-bolder font-size-base d-none d-md-inline mr-4">@name</span>
                                         <span class="symbol symbol-35">
                                             <span class="symbol-label text-white font-size-h5 font-weight-bold bg-white-o-30">S</span>
                                         </span>
@@ -138,11 +143,8 @@
             <div class="d-flex align-items-center mt-5">
                 <div class="d-flex flex-column">
                     <a href="#" class="font-weight-bold font-size-h5 text-dark-75 text-hover-primary">
-                        James Jones
+                        @name
                     </a>
-                    <div class="text-muted mt-1">
-                        Application Developer
-                    </div>
                     <div class="navi mt-2">
                         <a href="#" class="navi-item">
                             <span class="navi-link p-0 pb-2">
@@ -157,11 +159,11 @@
                                         </svg>
                                     </span>
                                 </span>
-                                <span class="navi-text text-muted text-hover-primary">jm@softplus.com</span>
+                                <span class="navi-text text-muted text-hover-primary">@email</span>
                             </span>
                         </a>
 
-                        <a href="#" class="btn btn-sm btn-light-primary font-weight-bolder py-2 px-5">Sign Out</a>
+                        <a href="/account/logout" class="btn btn-sm btn-light-primary font-weight-bolder py-2 px-5">Sign Out</a>
                     </div>
                 </div>
             </div>
