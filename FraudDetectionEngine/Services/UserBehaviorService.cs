@@ -20,8 +20,8 @@ namespace FraudDetectionEngine.Services
                 WHERE CardNumber = @CardNumber AND CreatedOn >= DATEADD(DAY, -30, GETDATE())",
                 new { tx.CardNumber });
 
-            tx.UserAvgAmount30Days = stats?.AvgAmount ?? 0;
-            tx.UserMaxAmount30Days = stats?.MaxAmount ?? 0;
+            tx.UserAvgAmount30Days = (float)(stats?.AvgAmount ?? 0);
+            tx.UserMaxAmount30Days = (float)(stats?.MaxAmount ?? 0);
             tx.UserTransactionCount7Days = stats?.CountLast7Days ?? 0;
 
             return tx;

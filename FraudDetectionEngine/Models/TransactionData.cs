@@ -30,6 +30,7 @@ namespace FraudDetectionEngine.Models
     {
         [ColumnName("PredictedLabel")]
         public bool IsFraud { get; set; }
+        public float Probability { get; set; }  
         public float Score { get; set; }
     }
 }

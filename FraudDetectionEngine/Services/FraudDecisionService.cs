@@ -4,6 +4,8 @@ using Dapper;
 using Microsoft.ML;
 using FraudDetectionEngine.Models;
 using Microsoft.Data.SqlClient;
+using System.Reflection;
+using System.Transactions;
 
 namespace FraudDetectionEngine.Services
 {
@@ -33,18 +35,17 @@ namespace FraudDetectionEngine.Services
         public FraudDecisionResult Decide(TransactionTraningData tx, string transactionId)
         {
             var enriched = UserBehaviorService.Enrich(tx, _connectionString);
-            var engine = _mlContext.Model.CreatePredictionEngine<TransactionTraningData, TransactionPrediction>(_model);
-            var prediction = engine.Predict(enriched);
+            var predictionEngine = _mlContext.Model.CreatePredictionEngine<TransactionTraningData, TransactionPrediction>(_model);
 
+            var prediction = predictionEngine.Predict(enriched);
             string action;
             string reason;
-
-            if (prediction.Score > 0.90f)
+            if (prediction.Probability >= 0.9f)
             {
                 action = "Block";
                 reason = "High risk score";
             }
-            else if (prediction.Score > 0.70f)
+            else if (prediction.Probability >= 0.75f)
             {
                 action = "Challenge";
                 reason = "Medium risk score";
@@ -55,12 +56,11 @@ namespace FraudDetectionEngine.Services
                 reason = "Low risk score";
             }
 
-
             // Store fraud result
-            LogDecision(enriched, transactionId, prediction, action);
+            //LogDecision(enriched, transactionId, prediction, action);
 
             // ALSO log user behavior
-            UserBehaviorService.Log(tx, transactionId, _connectionString);
+            //UserBehaviorService.Log(tx, transactionId, _connectionString);
 
             return new FraudDecisionResult
             {
@@ -91,7 +91,7 @@ namespace FraudDetectionEngine.Services
                     tx.Location,
                     tx.Device,
                     tx.TransactionType,
-                    Score = prediction.Score,
+                    Score = prediction.Probability,
                     IsFraud = prediction.IsFraud,
                     RiskLevel = riskLevel,
                     Source = tx.Source
