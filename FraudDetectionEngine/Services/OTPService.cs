@@ -14,9 +14,9 @@ namespace FraudDetectionEngine.Services
 
             using var conn = new SqlConnection(connectionString);
             conn.Execute(@"
-                INSERT INTO OtpChallenges (CardNumber, TransactionId, Code, ExpiresAt)
-                VALUES (@CardNumber, @TransactionId, @Code, @ExpiresAt)",
-                new { cardNumber, transactionId, code, ExpiresAt = expires });
+                INSERT INTO OtpChallenges (CardNumber, TransactionId, Code, ExpiresAt, IsVerified)
+                VALUES (@CardNumber, @TransactionId, @Code, @ExpiresAt, @IsVerified)",
+                new { cardNumber, transactionId, code, ExpiresAt = expires, IsVerified = 0 });
 
             return code;
         }
